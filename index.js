@@ -1,13 +1,17 @@
-function MakeGrid(numofGridItems, size) {
+function MakeGrid(numofGridItems) {
   let gridContainer = document.querySelector(".Grid-Container");
-  gridContainer.innerHTML = "";
+  gridContainer.innerHTML = ""; //clear the grid for resizing
   gridContainer.style[
     "grid-template-columns"
   ] = `repeat(${numofGridItems},1fr)`;
-  let gridItemWidth = 400 / numofGridItems;
-  let gridItemHeight = 400 / numofGridItems;
-  numofGridItems *= numofGridItems;
 
+  let gridWidth = parseInt(window.getComputedStyle(gridContainer).maxWidth);
+  let gridHeight = parseInt(window.getComputedStyle(gridContainer).maxHeight);
+
+  let gridItemWidth = gridWidth / numofGridItems;
+  let gridItemHeight = gridHeight / numofGridItems;
+
+  numofGridItems *= numofGridItems;
   for (let counter = 1; counter <= numofGridItems; counter++) {
     let gridItem = document.createElement("div");
     gridItem.style.height = `${gridItemHeight}px`;
