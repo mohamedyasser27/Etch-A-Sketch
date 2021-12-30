@@ -26,10 +26,32 @@ function ChangeSize() {
     let numoFGridItems = Array.from(
       document.querySelectorAll(".Grid-Container>div")
     ).length;
-    console.log(numoFGridItems);
     numoFGridItems === 256 ? MakeGrid(32) : MakeGrid(16);
+    ChangeColor();
   });
 }
 
-MakeGrid(16, 25);
+function ChangeColor() {
+  let gridCells = Array.from(document.querySelectorAll(".Grid-Container>div"));
+  let red = Math.floor(Math.random() * 256);
+  let green = Math.floor(Math.random() * 256);
+  let blue = Math.floor(Math.random() * 256);
+
+  let color = `rgb(${red}, ${green}, ${blue})`;
+
+  gridCells.forEach((cell) => {
+    cell.addEventListener("mouseover", () => {
+      if (cell.style.backgroundColor == "") {
+        red = Math.floor(Math.random() * 256);
+        green = Math.floor(Math.random() * 256);
+        blue = Math.floor(Math.random() * 256);
+        color = `rgb(${red}, ${green}, ${blue})`;
+        cell.style.backgroundColor = color;
+      }
+    });
+  });
+}
+
+MakeGrid(32);
 ChangeSize();
+ChangeColor();
