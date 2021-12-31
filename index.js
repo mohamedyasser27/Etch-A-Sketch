@@ -22,6 +22,7 @@ function MakeGrid(numofGridItems) {
     gridItem.brushType = "";
     gridContainer.appendChild(gridItem);
   }
+  handlecells();
 }
 
 function ColorGenerator(brush) {
@@ -38,6 +39,7 @@ function ColorGenerator(brush) {
   }
   return color;
 }
+
 function AddButtonEvents() {
   let buttons = Array.from(document.querySelectorAll(".Buttons>button"));
 
@@ -53,25 +55,21 @@ function AddButtonEvents() {
         let numoFGridItems = Array.from(
           document.querySelectorAll(".Grid-Container>div")
         ).length;
-        console.log(numoFGridItems);
-        console.log(Math.sqrt(numoFGridItems) * 2);
 
         numoFGridItems === 256
           ? MakeGrid(Math.sqrt(numoFGridItems) * 2)
           : MakeGrid(Math.sqrt(numoFGridItems) / 2);
-        handlecells();
       });
-    } else if (index == buttons.length - 1) {
+    } else if (index == buttons.length - 2) {
       item.addEventListener("click", () => {
         let numoFGridItems = Array.from(
           document.querySelectorAll(".Grid-Container>div")
         ).length;
-
-        numoFGridItems === 256
-          ? MakeGrid(Math.sqrt(numoFGridItems))
-            ? numoFGridItems === 1024
-            : MakeGrid(Math.sqrt(numoFGridItems))
-          : 1;
+        if (numoFGridItems == 256) {
+          MakeGrid(Math.sqrt(numoFGridItems));
+        } else if (numoFGridItems === 1024) {
+          MakeGrid(Math.sqrt(numoFGridItems));
+        }
       });
     } else {
       item.addEventListener("click", () => {
@@ -113,4 +111,3 @@ function handlecells() {
 
 MakeGrid(16);
 AddButtonEvents();
-handlecells();
