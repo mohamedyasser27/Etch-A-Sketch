@@ -21,10 +21,17 @@ html {
 button {
   font-family: inherit;
 }
+.Buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .Buttons > button {
-  background-color: black;
-  border: none;
-  color: white;
+  background-color: white;
+  border: black 2px solid;
+  color: black;
+  cursor: pointer;
   padding: 20px;
 }
 

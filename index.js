@@ -1,3 +1,6 @@
+let brushColor = "";
+let brushTypes = ["Black", "Random", "Eraser"];
+
 function MakeGrid(numofGridItems) {
   let gridContainer = document.querySelector(".Grid-Container");
   gridContainer.innerHTML = ""; //clear the grid for resizing
@@ -16,42 +19,98 @@ function MakeGrid(numofGridItems) {
     let gridItem = document.createElement("div");
     gridItem.style.height = `${gridItemHeight}px`;
     gridItem.style.width = `${gridItemWidth}px`;
+    gridItem.brushType = "";
     gridContainer.appendChild(gridItem);
   }
 }
 
-function ChangeSize() {
-  let button = document.querySelector(".Buttons>button");
-  button.addEventListener("click", () => {
-    let numoFGridItems = Array.from(
-      document.querySelectorAll(".Grid-Container>div")
-    ).length;
-    numoFGridItems === 256 ? MakeGrid(32) : MakeGrid(16);
-    ChangeColor();
+function ColorGenerator(brush) {
+  let color = ``;
+  if (brush == brushTypes[0]) {
+    color = `rgb(0, 0, 0)`;
+  } else if (brush == brushTypes[1]) {
+    let red = Math.floor(Math.random() * 256),
+      green = Math.floor(Math.random() * 256),
+      blue = Math.floor(Math.random() * 256);
+    color = `rgb(${red}, ${green}, ${blue})`;
+  } else {
+    color = `rgb(255, 255, 255)`;
+  }
+  return color;
+}
+function AddButtonEvents() {
+  let buttons = Array.from(document.querySelectorAll(".Buttons>button"));
+
+  buttons.forEach((item, index) => {
+    item.addEventListener("mouseover", () => {
+      item.style.backgroundColor = ColorGenerator(brushTypes[1]);
+    });
+    item.addEventListener("mouseout", () => {
+      item.style.backgroundColor = ColorGenerator(brushTypes[2]);
+    });
+    if (index == 0) {
+      item.addEventListener("click", () => {
+        let numoFGridItems = Array.from(
+          document.querySelectorAll(".Grid-Container>div")
+        ).length;
+        console.log(numoFGridItems);
+        console.log(Math.sqrt(numoFGridItems) * 2);
+
+        numoFGridItems === 256
+          ? MakeGrid(Math.sqrt(numoFGridItems) * 2)
+          : MakeGrid(Math.sqrt(numoFGridItems) / 2);
+        handlecells();
+      });
+    } else if (index == buttons.length - 1) {
+      item.addEventListener("click", () => {
+        let numoFGridItems = Array.from(
+          document.querySelectorAll(".Grid-Container>div")
+        ).length;
+
+        numoFGridItems === 256
+          ? MakeGrid(Math.sqrt(numoFGridItems))
+            ? numoFGridItems === 1024
+            : MakeGrid(Math.sqrt(numoFGridItems))
+          : 1;
+      });
+    } else {
+      item.addEventListener("click", () => {
+        brushColor = brushTypes[index - 1];
+      });
+    }
   });
 }
 
-function ChangeColor() {
+function handlecells() {
   let gridCells = Array.from(document.querySelectorAll(".Grid-Container>div"));
-  let red = Math.floor(Math.random() * 256);
-  let green = Math.floor(Math.random() * 256);
-  let blue = Math.floor(Math.random() * 256);
-
-  let color = `rgb(${red}, ${green}, ${blue})`;
 
   gridCells.forEach((cell) => {
     cell.addEventListener("mouseover", () => {
-      if (cell.style.backgroundColor == "") {
-        red = Math.floor(Math.random() * 256);
-        green = Math.floor(Math.random() * 256);
-        blue = Math.floor(Math.random() * 256);
-        color = `rgb(${red}, ${green}, ${blue})`;
-        cell.style.backgroundColor = color;
+      if (brushColor == brushTypes[0]) {
+        if (cell.brushType == brushTypes[0]) {
+          return;
+        }
+        cell.brushType = brushColor;
+
+        cell.style.backgroundColor = ColorGenerator(brushTypes[0]);
+      } else if (brushColor == brushTypes[1]) {
+        if (cell.brushType == brushTypes[1]) {
+          return;
+        }
+        cell.brushType = brushColor;
+
+        cell.style.backgroundColor = ColorGenerator(brushTypes[1]);
+      } else {
+        if (cell.brushType == brushTypes[2]) {
+          return;
+        }
+        cell.brushType = brushColor;
+        cell.style.backgroundColor = ColorGenerator(brushTypes[2]);
       }
     });
   });
 }
 
-MakeGrid(32);
-ChangeSize();
-ChangeColor();
+MakeGrid(16);
+AddButtonEvents();
+handlecells();
