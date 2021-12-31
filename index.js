@@ -1,6 +1,8 @@
 let brushColor = "";
-let brushTypes = ["Black", "Random", "Eraser"];
+let brushColors = ["Black", "Random", "Eraser"];
 
+let brushTypes = ["mouseover", "click"];
+let brushType = brushTypes[0];
 function MakeGrid(numofGridItems) {
   let gridContainer = document.querySelector(".Grid-Container");
   gridContainer.innerHTML = ""; //clear the grid for resizing
@@ -27,9 +29,9 @@ function MakeGrid(numofGridItems) {
 
 function ColorGenerator(brush) {
   let color = ``;
-  if (brush == brushTypes[0]) {
+  if (brush == brushColors[0]) {
     color = `rgb(0, 0, 0)`;
-  } else if (brush == brushTypes[1]) {
+  } else if (brush == brushColors[1]) {
     let red = Math.floor(Math.random() * 256),
       green = Math.floor(Math.random() * 256),
       blue = Math.floor(Math.random() * 256);
@@ -43,15 +45,15 @@ function ColorGenerator(brush) {
 function AddButtonEvents() {
   let buttons = Array.from(document.querySelectorAll(".Buttons>button"));
 
-  buttons.forEach((item, index) => {
-    item.addEventListener("mouseover", () => {
-      item.style.backgroundColor = ColorGenerator(brushTypes[1]);
+  buttons.forEach((button, index) => {
+    button.addEventListener("mouseover", () => {
+      button.style.backgroundColor = ColorGenerator(brushColors[1]);
     });
-    item.addEventListener("mouseout", () => {
-      item.style.backgroundColor = ColorGenerator(brushTypes[2]);
+    button.addEventListener("mouseout", () => {
+      button.style.backgroundColor = ColorGenerator(brushColors[2]);
     });
     if (index == 0) {
-      item.addEventListener("click", () => {
+      button.addEventListener("click", () => {
         let numoFGridItems = Array.from(
           document.querySelectorAll(".Grid-Container>div")
         ).length;
@@ -61,19 +63,36 @@ function AddButtonEvents() {
           : MakeGrid(Math.sqrt(numoFGridItems) / 2);
       });
     } else if (index == buttons.length - 2) {
-      item.addEventListener("click", () => {
+      button.addEventListener("click", () => {
         let numoFGridItems = Array.from(
           document.querySelectorAll(".Grid-Container>div")
         ).length;
-        if (numoFGridItems == 256) {
-          MakeGrid(Math.sqrt(numoFGridItems));
-        } else if (numoFGridItems === 1024) {
-          MakeGrid(Math.sqrt(numoFGridItems));
+        MakeGrid(Math.sqrt(numoFGridItems));
+      });
+    } else if (index == buttons.length - 1) {
+      let gridCells = Array.from(
+        document.querySelectorAll(".Grid-Container>div")
+      );
+      button.addEventListener("click", () => {
+        let gridCells = Array.from(
+          document.querySelectorAll(".Grid-Container>div")
+        );
+
+        if (brushType == brushTypes[0]) {
+          gridCells.forEach((cell) => {
+            cell.onmouseover = null;
+          });
+          brushType = brushTypes[1];
+        } else if (brushType == brushTypes[1]) {
+          gridCells.forEach((cell) => {
+            cell.onmouseover = CellEventHandler.bind(cell, cell);
+          });
+          brushType = brushTypes[0];
         }
       });
     } else {
-      item.addEventListener("click", () => {
-        brushColor = brushTypes[index - 1];
+      button.addEventListener("click", () => {
+        brushColor = brushColors[index - 1];
       });
     }
   });
@@ -83,30 +102,33 @@ function handlecells() {
   let gridCells = Array.from(document.querySelectorAll(".Grid-Container>div"));
 
   gridCells.forEach((cell) => {
-    cell.addEventListener("mouseover", () => {
-      if (brushColor == brushTypes[0]) {
-        if (cell.brushType == brushTypes[0]) {
-          return;
-        }
-        cell.brushType = brushColor;
-
-        cell.style.backgroundColor = ColorGenerator(brushTypes[0]);
-      } else if (brushColor == brushTypes[1]) {
-        if (cell.brushType == brushTypes[1]) {
-          return;
-        }
-        cell.brushType = brushColor;
-
-        cell.style.backgroundColor = ColorGenerator(brushTypes[1]);
-      } else {
-        if (cell.brushType == brushTypes[2]) {
-          return;
-        }
-        cell.brushType = brushColor;
-        cell.style.backgroundColor = ColorGenerator(brushTypes[2]);
-      }
-    });
+    cell.onclick = CellEventHandler.bind(cell, cell);
+    cell.onmouseover = CellEventHandler.bind(cell, cell);
   });
+}
+
+function CellEventHandler(cell, cell2) {
+  if (brushColor == brushColors[0]) {
+    if (cell.brushColor == brushColors[0]) {
+      return;
+    }
+    cell.brushColor = brushColor;
+
+    cell.style.backgroundColor = ColorGenerator(brushColors[0]);
+  } else if (brushColor == brushColors[1]) {
+    if (cell.brushColor == brushColors[1]) {
+      return;
+    }
+    cell.brushColor = brushColor;
+
+    cell.style.backgroundColor = ColorGenerator(brushColors[1]);
+  } else {
+    if (cell.brushColor == brushColors[2]) {
+      return;
+    }
+    cell.brushColor = brushColor;
+    cell.style.backgroundColor = ColorGenerator(brushColors[2]);
+  }
 }
 
 MakeGrid(16);
