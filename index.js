@@ -43,6 +43,26 @@ function ColorGenerator(brush) {
 }
 
 function AddButtonEvents() {
+  document.addEventListener("keydown", (event) => {
+    if (event.key == "q") {
+      let gridCells = Array.from(
+        document.querySelectorAll(".Grid-Container>div")
+      );
+
+      if (brushType == brushTypes[0]) {
+        gridCells.forEach((cell) => {
+          cell.onmouseover = null;
+        });
+        brushType = brushTypes[1];
+      } else if (brushType == brushTypes[1]) {
+        gridCells.forEach((cell) => {
+          cell.onmouseover = CellEventHandler.bind(cell, cell);
+        });
+        brushType = brushTypes[0];
+      }
+    }
+  });
+
   let buttons = Array.from(document.querySelectorAll(".Buttons>button"));
 
   buttons.forEach((button, index) => {
