@@ -17,6 +17,17 @@ This is a project i built for the odin project foundation path.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+<!-- Future Goals -->
+## Future Goals
+
+- [ ] add A Fill Brush
+- [ ] Add RGB selector
+- [ ] Refactor The Code
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+
+
 <!-- CONTACT -->
 ## Contact
 
