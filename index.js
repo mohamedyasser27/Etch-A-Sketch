@@ -1,10 +1,53 @@
 let brushColor = "";
-let brushColors = ["Black", "Random", "Eraser"];
+let brushColors = ["Black", "Random", "Eraser", "color"];
 
 let brushTypes = ["mouseover", "click"];
 let brushType = brushTypes[0];
+const gridContainer = document.querySelector(".Grid-Container");
+let gridCells = Array.from(document.querySelectorAll(".Grid-Container>div"));
+gridContainer.addEventListener("mouseover", (e) => {
+  let boxXCoord = e.currentTarget.getBoundingClientRect().x;
+  let boxYCoord = e.currentTarget.getBoundingClientRect().y;
+  let cellXCoord = e.target.getBoundingClientRect().x;
+  let cellYCoord = e.target.getBoundingClientRect().y;
+
+  let boxWidth = e.currentTarget.getBoundingClientRect().width;
+  let boxHeight = e.currentTarget.getBoundingClientRect().width;
+});
+
+const colorPicker = document.querySelector("#colorPicker");
+colorPicker.addEventListener("input", (e) => {
+  const colorValue = e.target.value;
+  brushColor = colorValue;
+  brushType = brushTypes[0];
+  const gridCells = Array.from(
+    document.querySelectorAll(".Grid-Container>div")
+  );
+
+  gridCells.forEach((cell) => {
+    cell.addEventListener("mouseover", () => {
+      cell.brushColor = brushColor;
+      cell.style.backgroundColor = brushColor;
+    });
+  });
+});
+colorPicker.addEventListener("click", (e) => {
+  const colorValue = e.target.value;
+  brushColor = colorValue;
+  brushType = brushTypes[0];
+  const gridCells = Array.from(
+    document.querySelectorAll(".Grid-Container>div")
+  );
+
+  gridCells.forEach((cell) => {
+    cell.addEventListener("mouseover", () => {
+      cell.brushColor = brushColor;
+      cell.style.backgroundColor = brushColor;
+    });
+  });
+});
+
 function MakeGrid(numofGridItems) {
-  let gridContainer = document.querySelector(".Grid-Container");
   gridContainer.innerHTML = ""; //clear the grid for resizing
   gridContainer.style[
     "grid-template-columns"
@@ -21,7 +64,6 @@ function MakeGrid(numofGridItems) {
     let gridItem = document.createElement("div");
     gridItem.style.height = `${gridItemHeight}px`;
     gridItem.style.width = `${gridItemWidth}px`;
-    gridItem.brushType = "";
     gridContainer.appendChild(gridItem);
   }
   handlecells();
@@ -42,58 +84,46 @@ function ColorGenerator(brush) {
   return color;
 }
 
-function AddButtonEvents() {
-  document.addEventListener("keydown", (event) => {
-    if (event.key == "q") {
-      let gridCells = Array.from(
-        document.querySelectorAll(".Grid-Container>div")
-      );
-
-      if (brushType == brushTypes[0]) {
-        gridCells.forEach((cell) => {
-          cell.onmouseover = null;
-        });
-        brushType = brushTypes[1];
-      } else if (brushType == brushTypes[1]) {
-        gridCells.forEach((cell) => {
-          cell.onmouseover = CellEventHandler.bind(cell, cell);
-        });
-        brushType = brushTypes[0];
-      }
-    }
+function changeGridSize() {
+  const changeSizeBtn = document.querySelectorAll(".Buttons>button")[0];
+  changeSizeBtn.addEventListener("click", () => {
+    console.log(brushColor);
+    let numoFGridItems = Array.from(
+      document.querySelectorAll(".Grid-Container>div")
+    ).length;
+    numoFGridItems === 256
+      ? MakeGrid(Math.sqrt(numoFGridItems) * 2)
+      : MakeGrid(Math.sqrt(numoFGridItems) / 2);
   });
+}
 
+function changeBrushType() {
+  if (brushType == brushTypes[0]) {
+    gridCells.forEach((cell) => {
+      cell.onmouseover = null;
+    });
+    brushType = brushTypes[1];
+  } else if (brushType == brushTypes[1]) {
+    gridCells.forEach((cell) => {
+      cell.onmouseover = CellEventHandler.bind(cell);
+    });
+    brushType = brushTypes[0];
+  }
+}
+function AddButtonEvents() {
   let buttons = Array.from(document.querySelectorAll(".Buttons>button"));
-
   buttons.forEach((button, index) => {
-    button.addEventListener("mouseover", () => {
-      button.style.backgroundColor = ColorGenerator(brushColors[1]);
-    });
-    button.addEventListener("mouseout", () => {
-      button.style.backgroundColor = ColorGenerator(brushColors[2]);
-    });
-    if (index == 0) {
-      button.addEventListener("click", () => {
-        let numoFGridItems = Array.from(
-          document.querySelectorAll(".Grid-Container>div")
-        ).length;
-
-        numoFGridItems === 256
-          ? MakeGrid(Math.sqrt(numoFGridItems) * 2)
-          : MakeGrid(Math.sqrt(numoFGridItems) / 2);
-      });
-    } else if (index == buttons.length - 2) {
+    if (index == buttons.length - 3) {
       button.addEventListener("click", () => {
         let numoFGridItems = Array.from(
           document.querySelectorAll(".Grid-Container>div")
         ).length;
         MakeGrid(Math.sqrt(numoFGridItems));
       });
+      console.log(brushColor);
     } else if (index == buttons.length - 1) {
-      let gridCells = Array.from(
-        document.querySelectorAll(".Grid-Container>div")
-      );
       button.addEventListener("click", () => {
+
         let gridCells = Array.from(
           document.querySelectorAll(".Grid-Container>div")
         );
@@ -105,7 +135,7 @@ function AddButtonEvents() {
           brushType = brushTypes[1];
         } else if (brushType == brushTypes[1]) {
           gridCells.forEach((cell) => {
-            cell.onmouseover = CellEventHandler.bind(cell, cell);
+            cell.onmouseover = CellEventHandler.bind(cell);
           });
           brushType = brushTypes[0];
         }
@@ -120,14 +150,13 @@ function AddButtonEvents() {
 
 function handlecells() {
   let gridCells = Array.from(document.querySelectorAll(".Grid-Container>div"));
-
   gridCells.forEach((cell) => {
     cell.onclick = CellEventHandler.bind(cell, cell);
     cell.onmouseover = CellEventHandler.bind(cell, cell);
   });
 }
 
-function CellEventHandler(cell, cell2) {
+function CellEventHandler(cell) {
   if (brushColor == brushColors[0]) {
     if (cell.brushColor == brushColors[0]) {
       return;
@@ -151,5 +180,25 @@ function CellEventHandler(cell, cell2) {
   }
 }
 
+function colorizeButtons() {
+  let buttons = Array.from(document.querySelectorAll(".Buttons>button"));
+
+  buttons.forEach((button) => {
+    button.addEventListener("mouseover", () => {
+      button.style.backgroundColor = ColorGenerator(brushColors[1]);
+    });
+    button.addEventListener("mouseout", () => {
+      button.style.backgroundColor = ColorGenerator(brushColors[2]);
+    });
+  });
+}
+
 MakeGrid(16);
 AddButtonEvents();
+colorizeButtons();
+changeGridSize();
+document.addEventListener("keydown", ({ key }) => {
+  if (key == "q") {
+    changeBrushType();
+  }
+});
